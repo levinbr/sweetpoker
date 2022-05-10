@@ -1,12 +1,15 @@
-import { Command } from "@colyseus/command";
+import { Command } from '@colyseus/command';
 
 import State, { Player } from './state';
 import TableRoom from './Table';
 
-export class OnJoinCommand extends Command<TableRoom<State>, { sessionId: string }> {
-
+export class OnJoinCommand extends Command<
+  TableRoom<State>,
+  { sessionId: string }
+> {
   execute({ sessionId }) {
-    this.state.players[sessionId] = new Player();
+    const player = new Player();
+    player.name = 'Vasya';
+    //this.state.players.set(sessionId, player);
   }
-
 }

@@ -1,4 +1,4 @@
-import { Schema, type, MapSchema } from "@colyseus/schema";
+import { Schema, type, ArraySchema } from '@colyseus/schema';
 
 class Card {
   number: number;
@@ -7,21 +7,20 @@ class Card {
 }
 
 export class Player extends Schema {
-  id: string;
-  name: string;
-  cards: Card[] = [];
-  bankroll: number;
+  @type('string') id: string;
+  @type('string') name: string;
+  //@type([]) cards: Card[] = [];
+  @type('number') bankroll: number;
 }
 
 class TableState extends Schema {
-  currentTurn: string;
-  @type("number") bank: number;
-  @type("string") bettingRound: string;
-  @type("number") deal: number;
-  @type("string") dealer: string;
-  @type("string") winner: string;
-
-  @type({ map: Player }) players = new MapSchema<Player>();
+  @type('string') currentTurn: string;
+  @type('number') bank: number;
+  @type('string') bettingRound: string;
+  @type('number') deal: number;
+  @type('string') dealer: string;
+  @type('string') winner: string;
+  @type([Player]) players = new ArraySchema<Player>();
 }
 
 export default TableState;
