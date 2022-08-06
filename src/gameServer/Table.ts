@@ -2,7 +2,7 @@ import { Room } from 'colyseus';
 import { Dispatcher } from '@colyseus/command';
 
 import { OnJoinCommand } from './commands';
-import { Player } from './state';
+import { Player } from './State';
 
 class TableRoom<State> extends Room {
   maxClients = 10;
