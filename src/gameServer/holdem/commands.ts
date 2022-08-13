@@ -6,14 +6,21 @@ import HoldemTableRoom from './Table';
 export class AddPlayerCommand extends Command<HoldemTableRoom, { sessionId: string }> {
     execute({ sessionId }) {
         const player = new Player({ id: sessionId, name: 'Vasya', bankroll: 100 });
+        const indexSeat = this.state.seats.findIndex(seat => !seat.playerId)
+
         this.state.players.push(player);
+        this.state.seats[indexSeat].playerId = sessionId;
     }
 }
 
 export class LeavePlayerCommand extends Command<HoldemTableRoom, { sessionId: string }> {
     execute({ sessionId }) {
         const player = new Player({ id: sessionId, name: 'Vasya', bankroll: 100 });
+
         this.state.players = this.state.players.filter(player => player.id !== sessionId);
+        this.state.seats.forEach((seat, index) => {
+            if (seat.playerId === sessionId) this.state.seats[index].playerId = '';
+        });
     }
 }
 

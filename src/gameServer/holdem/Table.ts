@@ -1,5 +1,6 @@
 import { Dispatcher } from '@colyseus/command';
 
+import { Seat } from '../State';
 import TableRoom from '../Table';
 import State, { Stages } from './State';
 import { AddPlayerCommand, LeavePlayerCommand, DrawCardCommand, ChangeStageCommand } from './commands';
@@ -14,6 +15,9 @@ class HoldemTableRoom extends TableRoom<State> {
         this.setState(new State().assign({
             stage: Stages.paused,
         }));
+
+        new Array(this.maxClients).fill(null).forEach((_, index) =>
+            this.state.seats.push(new Seat({number: index + 1})));
 
         this.setSimulationInterval(deltaTime => this.gameLoop(deltaTime), 500);
     }
@@ -55,13 +59,14 @@ class HoldemTableRoom extends TableRoom<State> {
                 const players = this.state.players;
                 const sBlind = this.state.smallBlindPosition;
                 const bBlind = this.state.bigBlindPosition;
-                const positions = players.map(player => player.positionNumber).sort();
+                const positions = this.state.seats
+                    .filter(seat => seat.playerId)
+                    .map(seat => seat.number)
+                    .sort()
 
                 this.state.sBlindPosition = sBlind ? getNextPosition(sBlind, positions) : positions[0];
                 this.state.bBlindPosition = bBlind ? getNextPosition(bBlind, positions) : positions[sBlind + 1];
-
-                this.state.stage = Stages.paused;
-                this.dispatcher.dispatch(new ChangeStageCommand(), { stage: Stages.preflop, delay: 3000 });
+                this.dispatcher.dispatch(new ChangeStageCommand(), { stage: Stages.preflop, delay: 2000 });
 
                 break;
 

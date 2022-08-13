@@ -6,6 +6,11 @@ export class Card extends Schema {
   rank: number;
 }
 
+export class Seat extends Schema {
+  number: number;
+  playerId: string;
+}
+
 export class Player extends Schema {
   @type('number') positionNumber: number;
   @type('boolean') inGame: boolean;
@@ -22,12 +27,10 @@ class TableState extends Schema {
   @type('string') stage: string;
   @type('number') gameNumber: number;
   @type([Player]) players = new ArraySchema<Player>();
-  cardDeck: Card[] = new ArraySchema<Card>();
   @type([Card]) communityCard = new ArraySchema<Card>();
   @type('string') currentPlayerId: string;
   @type('number') bank: number;
   @type('string') winnerId: string;
-  @type('number') size: number;
 }
 
 export default TableState;

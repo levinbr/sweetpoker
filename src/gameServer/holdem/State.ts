@@ -1,6 +1,6 @@
 import { ArraySchema, type } from '@colyseus/schema';
 
-import TableState, { Card, Player } from '../State';
+import TableState, { Card, Player, Seat } from '../State';
 
 export const initialState = {
   paused: true,
@@ -20,8 +20,11 @@ export enum Stages {
 }
 
 export class HoldemTableState extends TableState {
+  @type([Seat]) seats = new ArraySchema<Seat>(); //??
   @type("number") bBlindPosition: number;
   @type("number") sBlindPosition: number;
+  @type([Card]) cardsInDeck = new ArraySchema<Card>();
+  @type([Card]) cardsInTable = new ArraySchema<Card>();
 }
 
 export default HoldemTableState;
