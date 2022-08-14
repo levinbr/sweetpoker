@@ -1,9 +1,10 @@
 import { Dispatcher } from '@colyseus/command';
 
-import { Seat } from '../State';
+import { Card, Seat } from '../State';
 import TableRoom from '../Table';
+import { deck } from './constants';
+import { AddPlayerCommand, ChangeStageCommand, LeavePlayerCommand, DrawCardToPlayersCommand } from './commands';
 import State, { Stages } from './State';
-import { AddPlayerCommand, LeavePlayerCommand, DrawCardCommand, ChangeStageCommand } from './commands';
 import { getNextPosition } from './utils';
 
 class HoldemTableRoom extends TableRoom<State> {
@@ -18,6 +19,8 @@ class HoldemTableRoom extends TableRoom<State> {
 
         new Array(this.maxClients).fill(null).forEach((_, index) =>
             this.state.seats.push(new Seat({number: index + 1})));
+
+        deck.forEach(card => this.state.deck.push(new Card({ ...card })));
 
         this.setSimulationInterval(deltaTime => this.gameLoop(deltaTime), 500);
     }
@@ -66,24 +69,26 @@ class HoldemTableRoom extends TableRoom<State> {
 
                 this.state.sBlindPosition = sBlind ? getNextPosition(sBlind, positions) : positions[0];
                 this.state.bBlindPosition = bBlind ? getNextPosition(bBlind, positions) : positions[sBlind + 1];
+
+                this.state.stage = Stages.paused;
                 this.dispatcher.dispatch(new ChangeStageCommand(), { stage: Stages.preflop, delay: 2000 });
 
                 break;
 
             case Stages.preflop:
-                //раздача каджому по 2 карты
-                //запуск Stages.betting
+                this.dispatcher.dispatch(new DrawCardToPlayersCommand());
+                this.dispatcher.dispatch(new DrawCardToPlayersCommand());
 
-                /*
-                this.dispatcher.dispatch(new DrawCardCommand(), {
-                    sessionId: '1',
-                });
-                */
+                this.state.stage = Stages.paused;
+                this.dispatcher.dispatch(new ChangeStageCommand(), { stage: Stages.betting, delay: 2000 });
 
                 break;
 
             case Stages.betting:
-
+                //установить ход игрока
+                //запустить тайммер
+                //ждать от клиента экшена
+                // по экшену перейти на ход следующего игрока
                 break;
 
             default:

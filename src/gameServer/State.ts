@@ -24,6 +24,7 @@ export class Player extends Schema {
 }
 
 class TableState extends Schema {
+  @type([Card]) deck = new ArraySchema<Card>();
   @type('string') stage: string;
   @type('number') gameNumber: number;
   @type([Player]) players = new ArraySchema<Player>();
